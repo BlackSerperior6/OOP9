@@ -9,30 +9,33 @@
 
 using namespace std;
 
-const int MAX_SIZE = 30;
+//Искуствено заданое максимальное кол-во элементов.
+//Необходим для демонстрации работы ошибки IndexOutOfRang.
+const int MAX_SIZE = 30; 
 
-struct Node 
+
+struct Node //Структура элемента списка
 {
-	Node* next = nullptr;
-	Node* prev = nullptr;
-	int Data;
+	Node* next = nullptr; //Указатель на следующий элемент
+	Node* prev = nullptr; //Указатель на предыдущий
+	int Data; //Данные элемента
 };
 
-class Iterator
+class Iterator //Класс итератора списка
 {
 public:
 
-    friend class List;
+    friend class List; //Список дружествен к итератору
 
-    Iterator() { Element = nullptr; }
+    Iterator() { Element = nullptr; } //Конструктор без параметров
 
-    Iterator& operator=(Iterator& anotherIterator)
+    Iterator& operator=(Iterator& anotherIterator) //Перегруженный оператор присваивания
     {
         Element = anotherIterator.Element;
         return *this;
     }
-
-    bool operator==(Iterator& anotherIterator)
+    
+    bool operator==(Iterator& anotherIterator)//Оператор сравнения ит
     {
         return Element == anotherIterator.Element;
     }
@@ -44,44 +47,43 @@ public:
 
     Iterator& operator+=(int number)
     {
-        if (number < 0)
+        if (number < 0) //Генерация ошибка о негативном индексе
             throw NegativeIndexError();
 
-        for (int i = 0; i < number; i++)
-        {
-            if (Element == nullptr)
-                throw IndexOutOfRangeError();
-
+        for (int i = 0; i < number && Element != nullptr; i++)
             Element = Element->next;
-        }
 
-        if (Element == nullptr)
+        if (Element == nullptr) //Генерация ошибки о выходе за границы
             throw IndexOutOfRangeError();
 
         return *this;
     }
 
+    //Операцтор разыменовывания
     int& operator*() { return Element->Data; }
 
 private:
-    Node* Element;
+    Node* Element; //Итератор содержит указатель на элемент списка
 };
 
 class List
 {
 public:
 
-    List() { head = nullptr, tail = nullptr, Lenght = 0, beg.Element = head, end.Element = tail; }
+    //Конструктор без параметров
+    List() { head = nullptr, tail = nullptr, Lenght = 0, 
+        beg.Element = head, end.Element = tail; }
 
+    //Конструктор чистит список
     ~List() { Clear(); }
 
-    Iterator first() { return beg; }
+    Iterator first() { return beg; } //Получае итератор начала списка
 
-    Iterator last() { return end; }
+    Iterator last() { return end; } //Получает итератор конца списка
 
-    void Push_Back(int element)
+    void Push_Back(int element) //Метод добавления элемента в конец списка
     {
-        if (Lenght + 1 > MAX_SIZE)
+        if (Lenght + 1 > MAX_SIZE) //Генерация ошибка о попытке выйти за предел
             throw OverflowError();
 
         Node* new_node = new Node;
@@ -105,9 +107,9 @@ public:
         Lenght++;
     }
 
-    void Push_Front(int element)
+    void Push_Front(int element) //Метод добавления элемента в начало списка
     {
-        if (Lenght + 1 > MAX_SIZE)
+        if (Lenght + 1 > MAX_SIZE) //Генерация ошибка о попытке выйти за предел
             throw OverflowError();
 
         Node* new_node = new Node;
@@ -160,9 +162,9 @@ public:
         Lenght--;
     }
 
-    void Pop_Front()
+    void Pop_Front() //Метода удаления элемента из начала списка
     {
-        if (head == nullptr)
+        if (head == nullptr) //Генерация ошибки о попытке удаления элемента из пустого списка
             throw EmptyColletionError();
 
         if (head == tail)
@@ -187,12 +189,12 @@ public:
         Lenght--;
     }
 
-    int& operator[](int index)
+    int& operator[](int index) //Прямой доступ по индексу
     {
-        if (index >= Lenght)
+        if (index >= Lenght) //Генерация ошибки о слишком большом индексе
             throw IndexOutOfRangeError();
-
-        if (index < 0)
+        
+        if (index < 0) //Генерация ошибки о негативном индексе
             throw NegativeIndexError();
 
         Node* current = head;
